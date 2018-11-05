@@ -1,0 +1,30 @@
+{
+  "name": "turtlepay-bdca",
+  "version": "0.0.1",
+  "description": "TurtlePay: Blockchain Data Collection Agent",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TurtlePay/blockchain-data-collection-agent.git"
+  },
+  "keywords": [
+    "TurtlePay"
+  ],
+  "author": "TurtlePay Development Team",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/TurtlePay/blockchain-data-collection-agent/issues"
+  },
+  "homepage": "https://github.com/TurtlePay/blockchain-data-collection-agent#readme",
+  "dependencies": {
+    "mysql": "^2.16.0",
+    "safe-buffer": "^5.1.2",
+    "turtlecoin-rpc": "^0.8.4"
+  },
+  "devDependencies": {
+    "standard": "^12.0.1"
+  }
+}
