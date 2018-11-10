@@ -4,12 +4,13 @@
     "port": 3306,
     "username": "root",
     "password": "password",
-    "database": "turtlecoin"
+    "database": "turtlecoin",
+    "connectionLimit": 50
   },
   "node": {
     "host": "localhost",
     "port": 11898
   },
-  "catchUpInterval": 5000,
-  "catchUpBlockIncrement": 1000
+  "catchUpInterval": 2000,
+  "catchUpBlockIncrement": 100
 }

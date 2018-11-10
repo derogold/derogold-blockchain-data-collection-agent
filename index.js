@@ -19,7 +19,7 @@ const monitor = new BlockChainMonitor({
 const collector = new BlockChainCollector({
   host: Config.node.host,
   port: Config.node.port,
-  timeout: Config.catchUpBlockIncrement * 120
+  timeout: ((Config.catchUpBlockIncrement * 500) >= 5000) ? Config.catchUpBlockIncrement * 500 : 5000
 })
 
 const database = new DatabaseBackend({
@@ -27,7 +27,8 @@ const database = new DatabaseBackend({
   port: Config.mysql.port,
   username: Config.mysql.username,
   password: Config.mysql.password,
-  database: Config.mysql.database
+  database: Config.mysql.database,
+  connectionLimit: Config.mysql.connectionLimit
 })
 
 function log (message) {
@@ -47,7 +48,7 @@ monitor.on('fork', () => {
 })
 
 monitor.on('error', () => {
-  // yeah, I don't care about this
+  // for now we are suppressing errors because we'll just try again later
 })
 
 const catchupTimer = new Metronome(Config.catchUpInterval)
@@ -62,22 +63,34 @@ catchupTimer.on('tick', () => {
       var min = result.lowerBound
       var max = result.upperBound
       var done = false
+      var lastCallSuccess = true
 
       do {
+        if (!lastCallSuccess) {
+          increment = Math.floor(increment / 2)
+        }
+        if (increment < 1) increment = 1
         var diff = max - min
         max = (diff > increment) ? min + increment : max
+        if (max < min) max = min
         if (max === min) max++
-        var collected = await collectBlocks(min, max)
-        if (collected.min && collected.max) {
-          log('Collected blocks: ' + min + ' -> ' + max + ' (' + (max - min) + ')')
-          min = collected.max
-          max = result.upperBound
+        log('Requesting blocks: ' + min + ' -> ' + max + ' (' + (max - min) + ')')
+        try {
+          var collected = await collectBlocks(min, max)
+          if (collected.min && collected.max) {
+            log('Collected blocks: ' + min + ' -> ' + max + ' (' + (max - min) + ')')
+            if (max === result.upperBound) done = true
+            min = collected.max
+            max = result.upperBound
+            lastCallSuccess = true
+          }
+        } catch (err) {
+          lastCallSuccess = false
         }
-        if (max === result.upperBound) done = true
       } while (!done)
-    }
 
-    catchupTimer.pause = false
+      catchupTimer.pause = false
+    }
   }).catch((error) => {
     catchupTimer.pause = false
     log(error)
