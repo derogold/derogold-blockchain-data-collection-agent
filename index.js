@@ -95,9 +95,9 @@ function collectBlocks (min, max) {
 
         Promise.all(promises).then(() => {
           if (typeof max === 'undefined') {
-            return resolve({min, max: min})
+            return resolve({ min, max: min })
           } else {
-            return resolve({min, max})
+            return resolve({ min, max })
           }
         })
       }

@@ -21,7 +21,6 @@
   "homepage": "https://github.com/TurtlePay/blockchain-data-collection-agent#readme",
   "dependencies": {
     "mysql": "^2.16.0",
-    "safe-buffer": "^5.1.2",
     "turtlecoin-rpc": "^0.8.4"
   },
   "devDependencies": {
