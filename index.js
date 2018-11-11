@@ -51,6 +51,20 @@ monitor.on('error', () => {
   // for now we are suppressing errors because we'll just try again later
 })
 
+database.haveGenesis().then((haveGenesis) => {
+  if (haveGenesis) {
+    log('Genesis block found in database')
+  } else {
+    collectBlocks(0).then(() => {
+      log('Collected block: 0')
+    }).catch(() => {
+      log('Could not collect genesis block')
+    })
+  }
+}).catch(() => {
+  log('Could not check for genesis block in database')
+})
+
 const catchupTimer = new Metronome(Config.catchUpInterval)
 
 catchupTimer.on('tick', () => {
@@ -59,6 +73,7 @@ catchupTimer.on('tick', () => {
       catchupTimer.pause = true // pause our timer, as we're ready to rumble
       const result = results[0]
       var increment = Config.catchUpBlockIncrement
+      var passCount = 0
 
       var min = result.lowerBound
       var max = result.upperBound
@@ -83,8 +98,14 @@ catchupTimer.on('tick', () => {
             min = collected.max
             max = result.upperBound
             lastCallSuccess = true
+            passCount++
+            if (passCount > 10 && increment < Config.catchUpBlockIncrement) {
+              increment = increment * 2
+              if (increment > Config.catchUpBlockIncrement) increment = Config.catchUpBlockIncrement
+            }
           }
         } catch (err) {
+          passCount = 0
           lastCallSuccess = false
         }
       } while (!done)
