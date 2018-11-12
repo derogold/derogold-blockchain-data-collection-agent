@@ -10,7 +10,5 @@
   "node": {
     "host": "localhost",
     "port": 11898
-  },
-  "catchUpInterval": 2000,
-  "catchUpBlockIncrement": 100
+  }
 }

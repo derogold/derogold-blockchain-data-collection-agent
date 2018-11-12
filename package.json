@@ -1,6 +1,6 @@
 {
   "name": "turtlepay-bdca",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "TurtlePay: Blockchain Data Collection Agent",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   "dependencies": {
     "big-integer": "^1.6.36",
     "mysql": "^2.16.0",
-    "turtlecoin-rpc": "^0.8.4"
+    "turtlecoin-rpc": "^0.8.6"
   },
   "devDependencies": {
     "standard": "^12.0.1"
