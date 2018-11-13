@@ -38,7 +38,7 @@ const database = new DatabaseBackend({
 const collector = new BlockChainCollector({
   host: Config.node.host,
   port: Config.node.port,
-  timeout: 60000
+  timeout: 120000
 })
 
 database.haveGenesis().then((haveGenesis) => {
