@@ -1,6 +1,6 @@
 {
   "name": "turtlepay-bdca",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "TurtlePay: Blockchain Data Collection Agent",
   "main": "index.js",
   "scripts": {

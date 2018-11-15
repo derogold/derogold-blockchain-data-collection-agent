@@ -68,3 +68,14 @@ CREATE TABLE `transactions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1
  PARTITION BY KEY (`txnHash`)
 PARTITIONS 100;
+
+CREATE TABLE `transaction_pool` (
+  `txnHash` varchar(64) NOT NULL,
+  `fee` bigint(20) unsigned NOT NULL,
+  `size` int(10) unsigned NOT NULL,
+  `amount` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`txnHash`),
+  KEY `fee` (`fee`),
+  KEY `amount` (`amount`),
+  KEY `size` (`size`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

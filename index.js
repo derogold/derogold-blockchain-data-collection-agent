@@ -21,6 +21,9 @@ function log (message) {
 const timer = new Metronome(2000)
 timer.pause = true
 
+/* Timer to fire to get the transaction pool information */
+const transactionPoolTimer = new Metronome(2000)
+
 /* Set up our database connection */
 const database = new DatabaseBackend({
   host: Config.mysql.host,
@@ -82,5 +85,20 @@ timer.on('tick', () => {
 
     /* Allow our timer to fire again */
     timer.pause = false
+  })
+})
+
+transactionPoolTimer.on('tick', () => {
+  transactionPoolTimer.pause = true
+  var txnCount
+  collector.getTransactionPool().then((transactions) => {
+    txnCount = transactions.length
+    return database.saveTransactionPool(transactions)
+  }).then(() => {
+    log('Saved current transaction pool (' + txnCount + ')')
+    transactionPoolTimer.pause = false
+  }).catch((error) => {
+    log('Could not save transaction pool: ' + error)
+    transactionPoolTimer.pause = false
   })
 })
