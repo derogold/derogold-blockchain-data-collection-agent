@@ -22,7 +22,7 @@ const timer = new Metronome(2000)
 timer.pause = true
 
 /* Timer to fire to get the transaction pool information */
-const transactionPoolTimer = new Metronome(2000)
+const transactionPoolTimer = new Metronome(5000)
 
 /* Set up our database connection */
 const database = new DatabaseBackend({
@@ -88,6 +88,8 @@ timer.on('tick', () => {
   })
 })
 
+/* Let's go grab the transaction pool from the daemon and save
+   it in the database */
 transactionPoolTimer.on('tick', () => {
   transactionPoolTimer.pause = true
   var txnCount
