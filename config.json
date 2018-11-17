@@ -5,7 +5,7 @@
     "username": "root",
     "password": "password",
     "database": "turtlecoin",
-    "connectionLimit": 50
+    "connectionLimit": 10
   },
   "node": {
     "host": "localhost",
