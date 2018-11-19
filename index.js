@@ -67,11 +67,26 @@ database.haveGenesis().then((haveGenesis) => {
 
 timer.on('tick', () => {
   timer.pause = true // let's not tick again we're ready
+
+  /* We define this here as a method to catch a break in the chained
+     promises to allow us to exit the chain without generating an
+     error that gets dumped to the screen erroneously */
+  function BreakSignal () {}
+
+  /* Let's go grab the transaction hashes that we know about */
   database.getLastKnownBlockHashes().then((lastKnownHashes) => {
     return collector.queryBlocks(lastKnownHashes)
   }).then((results) => {
+    if (results.blocks.length === 1) {
+      /* If we only got one block back, then we are already at the top */
+      throw new BreakSignal()
+    }
+
+    /* Try to save what we've collected */
     return database.saveBlocks(results.blocks, results.height)
   }).then((results) => {
+    /* Great, we saved them, let's tell print out some information about
+       what we managed to collect */
     for (var i = 0; i < results.blocks.length; i++) {
       log('Saved block #' + results.blocks[i].height + ' (' + results.blocks[i].hash + ')')
     }
@@ -81,7 +96,11 @@ timer.on('tick', () => {
     /* Allow our timer to fire again */
     timer.pause = false
   }).catch((error) => {
-    log(error)
+    /* If we threw because we exited the promise chain early,
+       that's okay and we don't need to log an event */
+    if (!(error instanceof BreakSignal)) {
+      log(error)
+    }
 
     /* Allow our timer to fire again */
     timer.pause = false
@@ -97,7 +116,7 @@ transactionPoolTimer.on('tick', () => {
     txnCount = transactions.length
     return database.saveTransactionPool(transactions)
   }).then(() => {
-    log('Saved current transaction pool (' + txnCount + ')')
+    log('Saved current transaction pool (' + txnCount + ' transactions)')
     transactionPoolTimer.pause = false
   }).catch((error) => {
     log('Could not save transaction pool: ' + error)
