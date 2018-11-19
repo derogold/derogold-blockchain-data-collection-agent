@@ -5,6 +5,7 @@
 
 ## Prerequisites
 
+* [TurtleCoin](https://github.com/turtlecoin/turtlecoin) (development branch)
 * MariaDB/MySQL with InnoDB support
 * [Node.js](https://nodejs.org/) LTS
 
