@@ -29,7 +29,7 @@ cd blockchain-data-collection-agent && npm install
 
 3) Use your favorite text editor to change the values as necessary in `config.json`
 
-**Note:** Make sure you use a read-only database user for security reasons
+**Note:** Make sure you use a limited database user for security reasons
 
 ```javascript
 {
