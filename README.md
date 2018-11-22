@@ -48,13 +48,15 @@ cd blockchain-data-collection-agent && npm install
 }
 ```
 
-4) Fire up the script
+4) Load the database schema from `schema.sql` into your configured database.
+
+5) Fire up the script
 
 ```bash
 node index.js
 ```
 
-5) Optionally, install PM2 or another process manager to keep the service running.
+6) Optionally, install PM2 or another process manager to keep the service running.
 
 ```bash
 npm install -g pm2@latest
