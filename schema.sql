@@ -80,6 +80,12 @@ CREATE TABLE `transaction_pool` (
   KEY `size` (`size`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `transaction_outputs_index_maximums` (
+  `amount` bigint(20) NOT NULL,
+  `globalIndex` bigint(20) NOT NULL,
+  PRIMARY KEY (`amount`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 DROP TRIGGER IF EXISTS `turtlecoin`.`transaction_outputs_AFTER_INSERT`;
 
 DELIMITER $$
