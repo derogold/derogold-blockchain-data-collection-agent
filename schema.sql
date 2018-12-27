@@ -79,3 +79,19 @@ CREATE TABLE `transaction_pool` (
   KEY `amount` (`amount`),
   KEY `size` (`size`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TRIGGER IF EXISTS `turtlecoin`.`transaction_outputs_AFTER_INSERT`;
+
+DELIMITER $$
+USE `turtlecoin`$$
+CREATE DEFINER=CURRENT_USER TRIGGER `turtlecoin`.`transaction_outputs_AFTER_INSERT` AFTER INSERT ON `transaction_outputs` FOR EACH ROW
+BEGIN
+
+SET @maximum = (SELECT `globalIndex` FROM `transaction_outputs_index_maximums` WHERE `amount` = NEW.amount);
+
+IF NEW.globalIndex > @maximum OR @maximum IS NULL THEN
+  REPLACE INTO `transaction_outputs_index_maximums` (`amount`, `globalIndex`) VALUES (NEW.`amount`, NEW.`globalIndex`);
+END IF;
+
+END$$
+DELIMITER ;
