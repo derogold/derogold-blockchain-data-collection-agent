@@ -86,6 +86,13 @@ CREATE TABLE `transaction_outputs_index_maximums` (
   PRIMARY KEY (`amount`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `information` (
+  `key` varchar(255) NOT NULL,
+  `payload` blob NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
 DROP TRIGGER IF EXISTS `turtlecoin`.`transaction_outputs_AFTER_INSERT`;
 
 DELIMITER $$

@@ -24,6 +24,9 @@ timer.pause = true
 /* Timer to fire to get the transaction pool information */
 const transactionPoolTimer = new Metronome(5000)
 
+/* Timer to fire to get the network information */
+const informationTimer = new Metronome(5000)
+
 /* Set up our database connection */
 const database = new DatabaseBackend({
   host: Config.mysql.host,
@@ -121,5 +124,19 @@ transactionPoolTimer.on('tick', () => {
   }).catch((error) => {
     log('Could not save transaction pool: ' + error)
     transactionPoolTimer.pause = false
+  })
+})
+
+/* Let's go get the daemon information to store in the database */
+informationTimer.on('tick', () => {
+  informationTimer.pause = true
+  collector.getInfo().then((info) => {
+    return database.saveInfo('getinfo', JSON.stringify(info))
+  }).then(() => {
+    log('Saved daemon information')
+    informationTimer.pause = false
+  }).catch((error) => {
+    log('Could not save daemon information: ' + error)
+    informationTimer.pause = false
   })
 })
