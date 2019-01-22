@@ -19,9 +19,7 @@ CREATE TABLE `blocks` (
   KEY `timestamp` (`timestamp`),
   KEY `prevHash` (`prevHash`),
   KEY `hash` (`hash`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
- PARTITION BY KEY (`height`)
-PARTITIONS 100;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `transaction_inputs` (
   `txnHash` varchar(64) NOT NULL,
@@ -29,9 +27,7 @@ CREATE TABLE `transaction_inputs` (
   `amount` bigint(20) unsigned NOT NULL,
   `type` int(10) unsigned NOT NULL,
   PRIMARY KEY (`txnHash`,`keyImage`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
- PARTITION BY KEY ()
-PARTITIONS 100;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `transaction_outputs` (
   `txnHash` varchar(64) NOT NULL,
@@ -43,9 +39,7 @@ CREATE TABLE `transaction_outputs` (
   PRIMARY KEY (`txnHash`,`outputIndex`),
   KEY `globalIndex` (`globalIndex`,`amount`),
   KEY `amount` (`amount`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
- PARTITION BY KEY ()
-PARTITIONS 100;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `transactions` (
   `txnHash` varchar(64) NOT NULL,
@@ -66,9 +60,7 @@ CREATE TABLE `transactions` (
   KEY `blockHash` (`blockHash`),
   KEY `timestamp` (`timestamp`),
   KEY `paymentId` (`paymentId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
- PARTITION BY KEY (`txnHash`)
-PARTITIONS 100;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `transaction_pool` (
   `txnHash` varchar(64) NOT NULL,
@@ -79,20 +71,19 @@ CREATE TABLE `transaction_pool` (
   KEY `fee` (`fee`),
   KEY `amount` (`amount`),
   KEY `size` (`size`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `transaction_outputs_index_maximums` (
   `amount` bigint(20) NOT NULL,
   `globalIndex` bigint(20) NOT NULL,
   PRIMARY KEY (`amount`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `information` (
   `key` varchar(255) NOT NULL,
   `payload` blob NOT NULL,
   PRIMARY KEY (`key`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 DROP TRIGGER IF EXISTS `turtlecoin`.`transaction_outputs_AFTER_INSERT`;
 
