@@ -50,6 +50,7 @@ PARTITIONS 100;
 CREATE TABLE `transactions` (
   `txnHash` varchar(64) NOT NULL,
   `blockHash` varchar(64) NOT NULL,
+  `version` int(10) unsigned NOT NULL DEFAULT 1,
   `mixin` int(10) unsigned NOT NULL,
   `timestamp` bigint(20) unsigned NOT NULL,
   `paymentId` varchar(64) DEFAULT NULL,
