@@ -10,6 +10,8 @@ const DatabaseBackend = require('./lib/databaseBackend')
 const Metronome = require('./lib/metronome')
 const util = require('util')
 
+const enableDebugging = !!((process.env.TURTLEPAY_DEBUG.toUpperCase() === 'ON' || parseInt(process.env.TURTLEPAY_DEBUG) === 1))
+
 /* Let's set up a standard logger. Sure it looks cheap but it's
    reliable and won't crash */
 function log (message) {
@@ -46,6 +48,12 @@ const collector = new BlockChainCollector({
   port: Config.node.port,
   timeout: 120000
 })
+
+if (enableDebugging) {
+  collector.on('debug', (message) => {
+    log(util.format('[DEBUG] %s', message))
+  })
+}
 
 database.haveGenesis().then((haveGenesis) => {
   /* Check to see if the database has the genesis block, if it
