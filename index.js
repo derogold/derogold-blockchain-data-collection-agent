@@ -10,7 +10,7 @@ const DatabaseBackend = require('./lib/databaseBackend')
 const Metronome = require('./lib/metronome')
 const util = require('util')
 
-const enableDebugging = !!((process.env.TURTLEPAY_DEBUG.toUpperCase() === 'ON' || parseInt(process.env.TURTLEPAY_DEBUG) === 1))
+const enableDebugging = !!((typeof process.env.TURTLEPAY_DEBUG !== 'undefined' && (process.env.TURTLEPAY_DEBUG.toUpperCase() === 'ON' || parseInt(process.env.TURTLEPAY_DEBUG) === 1)))
 
 /* Let's set up a standard logger. Sure it looks cheap but it's
    reliable and won't crash */
