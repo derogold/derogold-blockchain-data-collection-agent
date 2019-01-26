@@ -60,20 +60,20 @@ database.haveGenesis().then((haveGenesis) => {
      doesn't then go get it and store it. If this ever says it
      could not collect the genesis block, we've got big problems */
   if (haveGenesis) {
-    log('Genesis block found in database')
+    log('[INFO] Genesis block found in database')
     timer.pause = false
   } else {
     collector.getGenesis().then((genesis) => {
       return database.saveBlock(genesis)
     }).then(() => {
-      log('Collected genesis block')
+      log('[INFO] Collected genesis block')
       timer.pause = false
     }).catch((error) => {
-      log('Could not collect genesis block: ' + error)
+      log('[ERROR] Could not collect genesis block: ' + error)
     })
   }
 }).catch(() => {
-  log('Could not check for genesis block in database')
+  log('[ERROR] Could not check for genesis block in database')
 })
 
 timer.on('tick', () => {
@@ -99,10 +99,10 @@ timer.on('tick', () => {
     /* Great, we saved them, let's tell print out some information about
        what we managed to collect */
     for (var i = 0; i < results.blocks.length; i++) {
-      log('Saved block #' + results.blocks[i].height + ' (' + results.blocks[i].hash + ')')
+      log('[INFO] Saved block #' + results.blocks[i].height + ' (' + results.blocks[i].hash + ')')
     }
-    log('============   ' + results.deletes + ' Delete Statements  ============')
-    log('============   Stored ' + results.inserts + ' Objects   ============')
+    log('[INFO] ============   ' + results.deletes + ' Delete Statements  ============')
+    log('[INFO] ============   Stored ' + results.inserts + ' Objects   ============')
 
     /* Allow our timer to fire again */
     timer.pause = false
@@ -110,7 +110,7 @@ timer.on('tick', () => {
     /* If we threw because we exited the promise chain early,
        that's okay and we don't need to log an event */
     if (!(error instanceof BreakSignal)) {
-      log(error)
+      log('[ERROR] ' + error)
     }
 
     /* Allow our timer to fire again */
@@ -127,10 +127,10 @@ transactionPoolTimer.on('tick', () => {
     txnCount = transactions.length
     return database.saveTransactionPool(transactions)
   }).then(() => {
-    log('Saved current transaction pool (' + txnCount + ' transactions)')
+    log('[INFO] Saved current transaction pool (' + txnCount + ' transactions)')
     transactionPoolTimer.pause = false
   }).catch((error) => {
-    log('Could not save transaction pool: ' + error)
+    log('[WARN] Could not save transaction pool [Are you sure you started with the blockexplorer enabled?]: ' + error)
     transactionPoolTimer.pause = false
   })
 })
@@ -141,10 +141,10 @@ informationTimer.on('tick', () => {
   collector.getInfo().then((info) => {
     return database.saveInfo('getinfo', JSON.stringify(info))
   }).then(() => {
-    log('Saved daemon information')
+    log('[INFO] Saved daemon information')
     informationTimer.pause = false
   }).catch((error) => {
-    log('Could not save daemon information: ' + error)
+    log('[WARN] Could not save daemon information: ' + error)
     informationTimer.pause = false
   })
 })
