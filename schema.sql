@@ -85,11 +85,10 @@ CREATE TABLE `information` (
   PRIMARY KEY (`key`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
-DROP TRIGGER IF EXISTS `turtlecoin`.`transaction_outputs_AFTER_INSERT`;
+DROP TRIGGER IF EXISTS `transaction_outputs_AFTER_INSERT`;
 
 DELIMITER $$
-USE `turtlecoin`$$
-CREATE DEFINER=CURRENT_USER TRIGGER `turtlecoin`.`transaction_outputs_AFTER_INSERT` AFTER INSERT ON `transaction_outputs` FOR EACH ROW
+CREATE DEFINER=CURRENT_USER TRIGGER `transaction_outputs_AFTER_INSERT` AFTER INSERT ON `transaction_outputs` FOR EACH ROW
 BEGIN
 
 SET @maximum = (SELECT `globalIndex` FROM `transaction_outputs_index_maximums` WHERE `amount` = NEW.amount);
