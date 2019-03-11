@@ -5,17 +5,13 @@
 
 ## Prerequisites
 
-* [TurtleCoin](https://github.com/turtlecoin/turtlecoin) (development branch)
+* [TurtleCoin](https://github.com/turtlecoin/turtlecoin)
 * MariaDB/MySQL with InnoDB support
 * [Node.js](https://nodejs.org/) LTS
 
-## Foreword
-
-We know that this documentation needs cleaned up and made easier to read. We'll compile it as part of the full documentation as the project works forward.
-
 ## Setup
 
-1) Clone this repository to wherever you'd like the API to run:
+1) Clone this repository to wherever you'd like as long as it can communicate with your SQL server to run:
 
 ```bash
 git clone https://github.com/TurtlePay/blockchain-data-collection-agent
@@ -27,36 +23,22 @@ git clone https://github.com/TurtlePay/blockchain-data-collection-agent
 cd blockchain-data-collection-agent && npm install
 ```
 
-3) Use your favorite text editor to change the values as necessary in `config.json`
+3) Load the database schema from `schema.sql` into your configured database.
 
-**Note:** Make sure you use a limited database user for security reasons
-
-```javascript
-{
-  "mysql": {
-    "host": "localhost",
-    "port": 3306,
-    "username": "root",
-    "password": "password",
-    "database": "turtlecoin",
-    "connectionLimit": 10
-  },
-  "node": {
-    "host": "localhost",
-    "port": 11898
-  }
-}
-```
-
-4) Load the database schema from `schema.sql` into your configured database.
-
-5) Fire up the script
+4) Fire up the script
 
 ```bash
+export MYSQL_HOST=localhost
+export MYSQL_PORT=3306
+export MYSQL_USERNAME=yourdbusername
+export MYSQL_PASSWORD=yourdbpassword
+export MYSQL_DATABASE=yourdbname
+export NODE_HOST=localhost
+export NODE_PORT=11898
 node index.js
 ```
 
-6) Optionally, install PM2 or another process manager to keep the service running.
+5) Optionally, install PM2 or another process manager to keep the service running.
 
 ```bash
 npm install -g pm2@latest
@@ -65,6 +47,6 @@ pm2 start index.js --name blockchain-data-collection-agent
 pm2 save
 ```
 
-6) Wait to build your database cache (this is likely to take days)
+6) Wait to build your database cache (this is likely to take days depending on the size of your chain)
 
-###### (c) 2018 TurtlePay™ Development Team
+###### (c) 2018-2019 TurtlePay™ Development Team

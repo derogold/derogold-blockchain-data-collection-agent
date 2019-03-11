@@ -1,21 +1,42 @@
-// Copyright (c) 2018, TurtlePay Developers
+// Copyright (c) 2018-2019, TurtlePay Developers
 //
 // Please see the included LICENSE file for more information.
 
 'use strict'
 
-const Config = require('./config.json')
 const BlockChainCollector = require('./lib/blockchainCollector')
 const DatabaseBackend = require('./lib/databaseBackend')
 const Metronome = require('./lib/metronome')
 const util = require('util')
 
-const enableDebugging = !!((typeof process.env.TURTLEPAY_DEBUG !== 'undefined' && (process.env.TURTLEPAY_DEBUG.toUpperCase() === 'ON' || parseInt(process.env.TURTLEPAY_DEBUG) === 1)))
+/* Load in our environment variables */
+const env = {
+  enableDebugging: !!((typeof process.env.TURTLEPAY_DEBUG !== 'undefined' && (process.env.TURTLEPAY_DEBUG.toUpperCase() === 'ON' || parseInt(process.env.TURTLEPAY_DEBUG) === 1))),
+  mysql: {
+    host: process.env.MYSQL_HOST || 'localhost',
+    port: process.env.MYSQL_PORT || 3306,
+    username: process.env.MYSQL_USERNAME || false,
+    password: process.env.MYSQL_PASSWORD || false,
+    database: process.env.MYSQL_DATABASE || false,
+    connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || 10
+  },
+  node: {
+    host: process.env.NODE_HOST || 'localhost',
+    port: process.env.NODE_PORT || 11898
+  }
+}
 
 /* Let's set up a standard logger. Sure it looks cheap but it's
    reliable and won't crash */
 function log (message) {
   console.log(util.format('%s: %s', (new Date()).toUTCString(), message))
+}
+
+/* Sanity check to make sure we have connection information
+   for the database and node */
+if (!env.mysql.host || !env.mysql.port || !env.mysql.username || !env.mysql.password || !env.mysql.database || !env.node.host || !env.node.port) {
+  log('It looks like you did not export all of the required connection information into your environment variables before attempting to start the service.')
+  process.exit(1)
 }
 
 /* We're going to go ahead and create our timer but pause it until
@@ -31,12 +52,12 @@ const informationTimer = new Metronome(5000)
 
 /* Set up our database connection */
 const database = new DatabaseBackend({
-  host: Config.mysql.host,
-  port: Config.mysql.port,
-  username: Config.mysql.username,
-  password: Config.mysql.password,
-  database: Config.mysql.database,
-  connectionLimit: Config.mysql.connectionLimit
+  host: env.mysql.host,
+  port: env.mysql.port,
+  username: env.mysql.username,
+  password: env.mysql.password,
+  database: env.mysql.database,
+  connectionLimit: env.mysql.connectionLimit
 })
 
 /* Set up our blockchain collector so that we can actually query
@@ -44,12 +65,12 @@ const database = new DatabaseBackend({
    statically to 60s for the time being so that we can monitor
    performance as it plays catch up */
 const collector = new BlockChainCollector({
-  host: Config.node.host,
-  port: Config.node.port,
+  host: env.node.host,
+  port: env.node.port,
   timeout: 120000
 })
 
-if (enableDebugging) {
+if (env.enableDebugging) {
   collector.on('debug', (message) => {
     log(util.format('[DEBUG] %s', message))
   })
