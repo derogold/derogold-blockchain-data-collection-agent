@@ -1,13 +1,13 @@
-# TurtlePay™ Blockchain Data Collection Agent (BDCA)
+# TurtlePay™ Blockchain Data Collection Agent
+![Version](https://img.shields.io/badge/version-0.1.4-blue.svg?cacheSeconds=2592000) ![Prerequisite](https://img.shields.io/badge/node-%3E%3D6-blue.svg) [![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)](https://github.com/TurtlePay/blockchain-data-collection-agent#readme) [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/TurtlePay/blockchain-data-collection-agent/graphs/commit-activity) [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-yellow.svg)](https://github.com/TurtlePay/blockchain-data-collection-agent/blob/master/LICENSE) [![Twitter: TurtlePay](https://img.shields.io/twitter/follow/TurtlePay.svg?style=social)](https://twitter.com/TurtlePay)
 
-#### Master Build Status
-[![Build Status](https://travis-ci.org/TurtlePay/blockchain-data-collection-agent.svg?branch=master)](https://travis-ci.org/TurtlePay/blockchain-data-collection-agent) [![Build status](https://ci.appveyor.com/api/projects/status/github/TurtlePay/blockchain-data-collection-agent?branch=master&svg=true)](https://ci.appveyor.com/project/brandonlehmann/blockchain-data-collection-agent/branch/master)
+> Collects TurtleCoin™ blockchain data into a SQL backend that serving and using the data a breeze.
 
 ## Prerequisites
 
-* [TurtleCoin](https://github.com/turtlecoin/turtlecoin)
-* MariaDB/MySQL with InnoDB support
-* [Node.js](https://nodejs.org/) LTS
+- TurtleCoin >= 0.12.0
+- node >=6
+- MariaDB/MySQL with InnoDB support
 
 ## Hardware Requirements
 
@@ -33,25 +33,17 @@ This list is by no means comprehensive nor do we guarantee the information or su
 * [15 Useful MySQL/MariaDB Performance Tuning and Optimization Tips](https://www.tecmint.com/mysql-mariadb-performance-tuning-and-optimization/)
 * [InnoDB Performance Optimisation](https://www.slideshare.net/MyDBOPS/innodb-performance-optimisation)
 
-## Setup
+## Install
 
-1) Clone this repository to wherever you'd like as long as it can communicate with your SQL server to run:
-
-```bash
-git clone https://github.com/TurtlePay/blockchain-data-collection-agent
+```sh
+npm install
 ```
 
-2) Install the required Node.js modules
+## Usage
 
-```bash
-cd blockchain-data-collection-agent && npm install
-```
+1) Set your environment variables and start the service up
 
-3) Load the database schema from `schema.sql` into your configured database.
-
-4) Fire up the script
-
-```bash
+```sh
 export MYSQL_HOST=localhost
 export MYSQL_PORT=3306
 export MYSQL_USERNAME=yourdbusername
@@ -59,18 +51,38 @@ export MYSQL_PASSWORD=yourdbpassword
 export MYSQL_DATABASE=yourdbname
 export NODE_HOST=localhost
 export NODE_PORT=11898
-node index.js
+npm start
 ```
 
-5) Optionally, install PM2 or another process manager to keep the service running.
+## Run tests
 
-```bash
-npm install -g pm2@latest
-pm2 startup
-pm2 start index.js --name blockchain-data-collection-agent
-pm2 save
+```sh
+npm test
 ```
 
-6) Wait to build your database cache (this is likely to take days depending on the size of your chain)
+## Author
 
-###### (c) 2018-2019 TurtlePay™ Development Team
+👤 **TurtlePay™ Development Team**
+
+* Twitter: [@TurtlePay](https://twitter.com/TurtlePay)
+* Github: [@TurtlePay](https://github.com/TurtlePay)
+
+## 🤝 Contributing
+
+Contributions, issues and feature requests are welcome!
+
+Feel free to check [issues page](https://github.com/TurtlePay/blockchain-data-collection-agent/issues).
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+
+## 📝 License
+
+Copyright © 2018-2019 [TurtlePay™ Development Team](https://github.com/TurtlePay).
+
+This project is [AGPL-3.0](https://github.com/TurtlePay/blockchain-data-collection-agent/blob/master/LICENSE) licensed.
+
+***
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
