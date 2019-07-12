@@ -4,6 +4,7 @@
 
 'use strict'
 
+require('dotenv').config()
 const BlockChainCollector = require('./lib/blockchainCollector')
 const DatabaseBackend = require('./lib/databaseBackend')
 const Metronome = require('./lib/metronome')
@@ -36,7 +37,7 @@ function log (message) {
    for the database and node */
 if (!env.mysql.host || !env.mysql.port || !env.mysql.username || !env.mysql.password || !env.mysql.database || !env.node.host || !env.node.port) {
   log('It looks like you did not export all of the required connection information into your environment variables before attempting to start the service.')
-  process.exit(1)
+  process.exit(0)
 }
 
 /* We're going to go ahead and create our timer but pause it until
