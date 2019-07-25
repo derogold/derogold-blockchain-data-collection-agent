@@ -127,9 +127,11 @@ timer.on('tick', () => {
 
       /* If the first block hash matches our top known block hash
          we need to discard it from the result to avoid deleting
-         it and re-saving it again */
+         it and re-saving it again. We also need to bump our start
+         height to avoid deleting the block */
       if (block.hash === topKnownBlockHash) {
         results.blocks.shift()
+        results.height++
       }
     }
 
