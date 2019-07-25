@@ -106,13 +106,31 @@ timer.on('tick', () => {
      error that gets dumped to the screen erroneously */
   function BreakSignal () {}
 
+  var topKnownBlockHash
+
   /* Let's go grab the transaction hashes that we know about */
   database.getLastKnownBlockHashes().then((lastKnownHashes) => {
+    /* We need the top block we know about here to use later */
+    if (lastKnownHashes.length !== 0) {
+      topKnownBlockHash = lastKnownHashes[0]
+    }
     return collector.queryBlocks(lastKnownHashes)
   }).then((results) => {
     if (results.blocks.length === 1) {
       /* If we only got one block back, then we are already at the top */
       throw new BreakSignal()
+    }
+
+    if (results.blocks.length !== 0) {
+      /* Grab the first block in the response */
+      const block = results.blocks[0]
+
+      /* If the first block hash matches our top known block hash
+         we need to discard it from the result to avoid deleting
+         it and re-saving it again */
+      if (block.hash === topKnownBlockHash) {
+        results.blocks.shift()
+      }
     }
 
     /* Try to save what we've collected */
