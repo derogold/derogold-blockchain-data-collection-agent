@@ -24,7 +24,8 @@ const env = {
   node: {
     host: process.env.NODE_HOST || 'localhost',
     port: process.env.NODE_PORT || 11898
-  }
+  },
+  storeRawTransactionExtra: process.env.STORE_RAW_TRANSACTION_EXTRA || false
 }
 
 /* Let's set up a standard logger. Sure it looks cheap but it's
@@ -58,7 +59,8 @@ const database = new DatabaseBackend({
   username: env.mysql.username,
   password: env.mysql.password,
   database: env.mysql.database,
-  connectionLimit: env.mysql.connectionLimit
+  connectionLimit: env.mysql.connectionLimit,
+  storeRawTransactionExtra: env.storeRawTransactionExtra
 })
 
 /* Set up our blockchain collector so that we can actually query
