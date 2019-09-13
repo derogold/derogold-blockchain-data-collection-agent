@@ -15,10 +15,12 @@ CREATE TABLE `blocks` (
   `sizeMedian` int(10) unsigned NOT NULL,
   `totalFeeAmount` bigint(20) unsigned NOT NULL,
   `transactionsCumulativeSize` int(10) unsigned NOT NULL,
+  `transactionCount` int(10) unsigned NOT NULL,
   PRIMARY KEY (`height`),
   KEY `timestamp` (`timestamp`),
   KEY `prevHash` (`prevHash`),
-  KEY `hash` (`hash`)
+  KEY `hash` (`hash`),
+  KEY `transactionCount` (`transactionCount`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED;
 
 CREATE TABLE `transaction_inputs` (
