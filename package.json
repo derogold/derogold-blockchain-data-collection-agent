@@ -28,7 +28,7 @@
     "big-integer": "^1.6.44",
     "dotenv": "^8.1.0",
     "mysql": "^2.17.1",
-    "turtlecoin-rpc": "^1.0.2"
+    "turtlecoin-rpc": "^1.0.3"
   },
   "devDependencies": {
     "standard": "^13.0.1"
