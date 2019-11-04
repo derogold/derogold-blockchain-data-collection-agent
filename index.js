@@ -7,8 +7,8 @@
 require('dotenv').config()
 const BlockChainCollector = require('./lib/blockchainCollector')
 const DatabaseBackend = require('./lib/databaseBackend')
-const Metronome = require('./lib/metronome')
-const util = require('util')
+const Logger = require('./lib/logger')
+const Metronome = require('node-metronome')
 
 /* Load in our environment variables */
 const env = {
@@ -28,16 +28,14 @@ const env = {
   storeRawTransactionExtra: process.env.STORE_RAW_TRANSACTION_EXTRA || false
 }
 
-/* Let's set up a standard logger. Sure it looks cheap but it's
-   reliable and won't crash */
-function log (message) {
-  console.log(util.format('%s: %s', (new Date()).toUTCString(), message))
-}
+if (!process.env.NODE_ENV || process.env.NODE_ENV.toLowerCase() !== 'production') {
+    Logger.warning('Node.js is not running in production mode. Consider running in production mode: export NODE_ENV=production')
+  }
 
 /* Sanity check to make sure we have connection information
    for the database and node */
 if (!env.mysql.host || !env.mysql.port || !env.mysql.username || !env.mysql.password || !env.mysql.database || !env.node.host || !env.node.port) {
-  log('It looks like you did not export all of the required connection information into your environment variables before attempting to start the service.')
+  Logger.error('It looks like you did not export all of the required connection information into your environment variables before attempting to start the service.')
   process.exit(0)
 }
 
@@ -73,32 +71,32 @@ const collector = new BlockChainCollector({
   timeout: 120000
 })
 
-if (env.enableDebugging) {
-  collector.on('debug', (message) => {
-    log(util.format('[DEBUG] %s', message))
-  })
-}
+if (env.enableDebugging) collector.on('debug', message => Logger.debug('[DEBUG] %s', message))
 
-database.haveGenesis().then((haveGenesis) => {
-  /* Check to see if the database has the genesis block, if it
-     doesn't then go get it and store it. If this ever says it
-     could not collect the genesis block, we've got big problems */
-  if (haveGenesis) {
-    log('[INFO] Genesis block found in database')
-    timer.pause = false
-  } else {
-    collector.getGenesis().then((genesis) => {
-      return database.saveBlock(genesis)
-    }).then(() => {
-      log('[INFO] Collected genesis block')
+database.haveGenesis()
+  .then(haveGenesis => {
+    /* Check to see if the database has the genesis block, if it
+       doesn't then go get it and store it. If this ever says it
+       could not collect the genesis block, we've got big problems */
+    if (haveGenesis) {
+      Logger.info('Genesis block found in database')
       timer.pause = false
-    }).catch((error) => {
-      log('[ERROR] Could not collect genesis block: ' + error)
-    })
-  }
-}).catch(() => {
-  log('[ERROR] Could not check for genesis block in database')
-})
+    } else {
+      collector.getGenesis()
+        .then(genesis => { return database.saveBlock(genesis) }).then(() => {
+          Logger.info('Collected genesis block')
+          timer.pause = false
+        })
+        .catch(error => {
+          Logger.error('Could not collect genesis block: %s', error)
+          process.exit(0)
+        })
+    }
+  })
+  .catch(() => {
+    Logger.error('Could not check for genesis block in database')
+    process.exit(0)
+  })
 
 timer.on('tick', () => {
   timer.pause = true // let's not tick again we're ready
@@ -111,84 +109,90 @@ timer.on('tick', () => {
   var topKnownBlockHash
 
   /* Let's go grab the transaction hashes that we know about */
-  database.getLastKnownBlockHashes().then((lastKnownHashes) => {
-    /* We need the top block we know about here to use later */
-    if (lastKnownHashes.length !== 0) {
-      topKnownBlockHash = lastKnownHashes[0]
-    }
-    return collector.queryBlocks(lastKnownHashes)
-  }).then((results) => {
-    if (results.blocks.length === 1) {
-      /* If we only got one block back, then we are already at the top */
-      throw new BreakSignal()
-    }
-
-    if (results.blocks.length !== 0) {
-      /* Grab the first block in the response */
-      const block = results.blocks[0]
-
-      /* If the first block hash matches our top known block hash
-         we need to discard it from the result to avoid deleting
-         it and re-saving it again. We also need to bump our start
-         height to avoid deleting the block */
-      if (block.hash === topKnownBlockHash) {
-        results.blocks.shift()
-        results.height++
+  return database.getLastKnownBlockHashes()
+    .then(lastKnownHashes => {
+      /* We need the top block we know about here to use later */
+      if (lastKnownHashes.length !== 0) {
+        topKnownBlockHash = lastKnownHashes[0]
       }
-    }
 
-    /* Try to save what we've collected */
-    return database.saveBlocks(results.blocks, results.height)
-  }).then((results) => {
-    /* Great, we saved them, let's tell print out some information about
-       what we managed to collect */
-    for (var i = 0; i < results.blocks.length; i++) {
-      log('[INFO] Saved block #' + results.blocks[i].height + ' (' + results.blocks[i].hash + ')')
-    }
-    log('[INFO] ============   ' + results.deletes + ' Delete Statements  ============')
-    log('[INFO] ============   Stored ' + results.inserts + ' Objects   ============')
+      return collector.queryBlocks(lastKnownHashes)
+    })
+    .then(results => {
+      if (results.blocks.length === 1) {
+      /* If we only got one block back, then we are already at the top */
+        throw new BreakSignal()
+      }
 
-    /* Allow our timer to fire again */
-    timer.pause = false
-  }).catch((error) => {
-    /* If we threw because we exited the promise chain early,
-       that's okay and we don't need to log an event */
-    if (!(error instanceof BreakSignal)) {
-      log('[ERROR] ' + error)
-    }
+      if (results.blocks.length !== 0) {
+      /* Grab the first block in the response */
+        const block = results.blocks[0]
 
-    /* Allow our timer to fire again */
-    timer.pause = false
-  })
+        /* If the first block hash matches our top known block hash
+           we need to discard it from the result to avoid deleting
+           it and re-saving it again. We also need to bump our start
+           height to avoid deleting the block */
+        if (block.hash === topKnownBlockHash) {
+          results.blocks.shift()
+          results.height++
+        }
+      }
+
+      /* Try to save what we've collected */
+      return database.saveBlocks(results.blocks, results.height)
+    })
+    .then(results => {
+      /* Great, we saved them, let's tell print out some information about
+         what we managed to collect */
+      for (var i = 0; i < results.blocks.length; i++) {
+        Logger.info('Saved block #%s (%s)', results.blocks[i].height, results.blocks[i].hash)
+      }
+
+      Logger.info('============   %s Delete Statements  ============', results.deletes)
+      Logger.info('============   Stored %s Objects   ============', results.inserts)
+
+      /* Allow our timer to fire again */
+      timer.pause = false
+    })
+    .catch(error => {
+      /* If we threw because we exited the promise chain early,
+         that's okay and we don't need to log an event */
+      if (!(error instanceof BreakSignal)) {
+        Logger.error(error.toString())
+      }
+
+      /* Allow our timer to fire again */
+      timer.pause = false
+    })
 })
 
 /* Let's go grab the transaction pool from the daemon and save
    it in the database */
 transactionPoolTimer.on('tick', () => {
   transactionPoolTimer.pause = true
-  var txnCount
-  collector.getTransactionPool().then((transactions) => {
-    txnCount = transactions.length
-    return database.saveTransactionPool(transactions)
-  }).then(() => {
-    log('[INFO] Saved current transaction pool (' + txnCount + ' transactions)')
-    transactionPoolTimer.pause = false
-  }).catch((error) => {
-    log('[WARN] Could not save transaction pool [Are you sure you started with the blockexplorer enabled?]: ' + error)
-    transactionPoolTimer.pause = false
-  })
+  var transactions
+
+  return collector.getTransactionPool()
+    .then(poolTransactions => { transactions = poolTransactions.length })
+    .then(() => { return database.saveTransactionPool(transactions) })
+    .then(() => Logger.info('Saved current transaction pool (%s transactions)', transactions.length))
+    .then(() => { transactionPoolTimer.pause = false })
+    .catch((error) => {
+      Logger.warning('Could not save transaction pool [Are you sure you started with the blockexplorer enabled?]: %s', error)
+      transactionPoolTimer.pause = false
+    })
 })
 
 /* Let's go get the daemon information to store in the database */
 informationTimer.on('tick', () => {
   informationTimer.pause = true
-  collector.getInfo().then((info) => {
-    return database.saveInfo('getinfo', JSON.stringify(info))
-  }).then(() => {
-    log('[INFO] Saved daemon information')
-    informationTimer.pause = false
-  }).catch((error) => {
-    log('[WARN] Could not save daemon information: ' + error)
-    informationTimer.pause = false
-  })
+
+  return collector.getInfo()
+    .then(info => { return database.saveInfo('getinfo', JSON.stringify(info)) })
+    .then(() => Logger.info('Saved daemon information'))
+    .then(() => { informationTimer.pause = false })
+    .catch(error => {
+      Logger.warning('Could not save daemon information: %s', error)
+      informationTimer.pause = false
+    })
 })
