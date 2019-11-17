@@ -29,8 +29,8 @@ const env = {
 }
 
 if (!process.env.NODE_ENV || process.env.NODE_ENV.toLowerCase() !== 'production') {
-    Logger.warning('Node.js is not running in production mode. Consider running in production mode: export NODE_ENV=production')
-  }
+  Logger.warning('Node.js is not running in production mode. Consider running in production mode: export NODE_ENV=production')
+}
 
 /* Sanity check to make sure we have connection information
    for the database and node */

@@ -17,10 +17,7 @@ const database = new DatabaseBackend({
   connectionLimit: Config.mysql.connectionLimit
 })
 
-database.buildDeleteBlocksFromHeightQueries(badBlockStart).then((queries) => {
-  return database._insertTransaction(queries)
-}).then((results) => {
-  console.log(results)
-}).catch((error) => {
-  console.log(error)
-})
+database.buildDeleteBlocksFromHeightQueries(badBlockStart)
+  .then(queries => { return database._insertTransaction(queries) })
+  .then(results => console.log(results))
+  .catch(error => console.error(error))
