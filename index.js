@@ -45,10 +45,10 @@ const timer = new Metronome(2000)
 timer.pause = true
 
 /* Timer to fire to get the transaction pool information */
-const transactionPoolTimer = new Metronome(5000)
+const transactionPoolTimer = new Metronome(5000, true)
 
 /* Timer to fire to get the network information */
-const informationTimer = new Metronome(5000)
+const informationTimer = new Metronome(5000, true)
 
 /* Set up our database connection */
 const database = new DatabaseBackend({
@@ -168,11 +168,12 @@ timer.on('tick', () => {
 /* Let's go grab the transaction pool from the daemon and save
    it in the database */
 transactionPoolTimer.on('tick', () => {
+  Logger.info('Starting pool collection')
   transactionPoolTimer.pause = true
   var transactions
 
   return collector.getTransactionPool()
-    .then(poolTransactions => { transactions = poolTransactions.length })
+    .then(poolTransactions => { transactions = poolTransactions })
     .then(() => { return database.saveTransactionPool(transactions) })
     .then(() => Logger.info('Saved current transaction pool (%s transactions)', transactions.length))
     .then(() => { transactionPoolTimer.pause = false })
