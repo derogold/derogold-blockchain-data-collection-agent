@@ -29,7 +29,36 @@ const database = new DatabaseBackend({
   connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || 10
 })
 
-database.buildDeleteBlocksFromHeightQueries(badBlockStart)
-  .then(queries => { return database._insertTransaction(queries) })
-  .then(results => console.log(results))
-  .catch(error => console.error(error))
+Logger.info('Database will be rewound to block #%s', badBlockStart - 1)
+
+if (badBlockStart === 0) {
+  database.getLastKnownBlockHeight()
+    .then(height => Logger.info('Database contains blocks up to block #%s', height || 0))
+    .then(() => Logger.warning('Resetting entire database...'))
+    .then(() => { return database.reset() })
+    .then(results => Logger.warning('Truncated %s database tables', results))
+    .then(() => Logger.info('Database reset complete'))
+    .then(() => process.exit(0))
+    .catch(error => {
+      Logger.error(error)
+      process.exit(1)
+    })
+} else {
+  database.getLastKnownBlockHeight()
+    .then(height => Logger.info('Database contains blocks up to block #%s', height || 0))
+    .then(() => { return database.buildDeleteBlocksFromHeightQueries(badBlockStart) })
+    .then(queries => { return database._insertTransaction(queries) })
+    .then(results => {
+      if (results.length === 0) {
+        Logger.warning('No blocks found beyond block #%s', badBlockStart - 1)
+      } else {
+        Logger.warning('Executed %s queries', results.length)
+      }
+    })
+    .then(() => Logger.info('Database rewound to block #%s', badBlockStart - 1))
+    .then(() => process.exit(0))
+    .catch(error => {
+      Logger.error(error)
+      process.exit(1)
+    })
+}
