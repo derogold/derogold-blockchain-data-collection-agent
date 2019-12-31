@@ -168,7 +168,6 @@ timer.on('tick', () => {
 /* Let's go grab the transaction pool from the daemon and save
    it in the database */
 transactionPoolTimer.on('tick', () => {
-  Logger.info('Starting pool collection')
   transactionPoolTimer.pause = true
   var transactions
 
