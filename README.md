@@ -15,10 +15,10 @@
 
 ## Hardware Requirements
 
-For the best performance when using this package (as of June 30, 2019), your Database server must have a minimum of the following:
+For the best performance when using this package (as of December 31, 2019), your Database server must have a minimum of the following:
 
-* 32GB RAM
-  * 30GB dedicated to MariaDB/MySQL
+* 48GB RAM
+  * 46GB dedicated to MariaDB/MySQL
 * 2 CPU Cores (4 Recommended)
 * SSD Storage
 
