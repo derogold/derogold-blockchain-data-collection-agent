@@ -4,17 +4,29 @@
 
 'use strict'
 
-const badBlockStart = 1015250
+require('dotenv').config()
 const DatabaseBackend = require('./lib/databaseBackend')
-const Config = require('./config.json')
+const Logger = require('./lib/logger')
+
+if (process.argv.length !== 3) {
+  Logger.error('Must supply the block number to rewind to as a cli argument: node %s 15340', process.argv[1])
+  process.exit(1)
+}
+
+if (isNaN(process.argv[2])) {
+  Logger.error('Supplied block number to rewind to must be a number: %s', process.argv[2])
+  process.exit(1)
+}
+
+const badBlockStart = parseInt(process.argv[2])
 
 const database = new DatabaseBackend({
-  host: Config.mysql.host,
-  port: Config.mysql.port,
-  username: Config.mysql.username,
-  password: Config.mysql.password,
-  database: Config.mysql.database,
-  connectionLimit: Config.mysql.connectionLimit
+  host: process.env.MYSQL_HOST || 'localhost',
+  port: process.env.MYSQL_PORT || 3306,
+  username: process.env.MYSQL_USERNAME,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  connectionLimit: process.env.MYSQL_CONNECTION_LIMIT || 10
 })
 
 database.buildDeleteBlocksFromHeightQueries(badBlockStart)
