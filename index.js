@@ -82,19 +82,18 @@ database.haveGenesis()
       Logger.info('Genesis block found in database')
       timer.pause = false
     } else {
-      collector.getGenesis()
-        .then(genesis => { return database.saveBlock(genesis) }).then(() => {
-          Logger.info('Collected genesis block')
-          timer.pause = false
-        })
+      return collector.getGenesis()
+        .then(genesis => { return database.saveBlock(genesis) })
+        .then(() => Logger.info('Collected genesis block'))
+        .then(() => { timer.pause = false })
         .catch(error => {
           Logger.error('Could not collect genesis block: %s', error)
           process.exit(0)
         })
     }
   })
-  .catch(() => {
-    Logger.error('Could not check for genesis block in database')
+  .catch(error => {
+    Logger.error('Could not check for genesis block in database: %s', error)
     process.exit(0)
   })
 
