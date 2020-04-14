@@ -76,7 +76,7 @@ npm test
 
 Contributions, issues and feature requests are welcome!
 
-Feel free to check [issues page](https://github.com/TurtlePay/blockchain-data-collection-agent/issues).
+Feel free to check [issues page](https://github.com/derogold/derogold-blockchain-data-collection-agent/issues).
 
 ## Show your support
 
@@ -86,5 +86,6 @@ Give a ⭐️ if this project helped you!
 ## 📝 License
 
 Copyright © 2018-2020 [TurtlePay® Development Team](https://github.com/TurtlePay).
+Copyright © 2020 [DeroGold Developers](https://github.com/derogold).
 
 This project is [AGPL-3.0](https://github.com/TurtlePay/blockchain-data-collection-agent/blob/master/LICENSE) licensed.
