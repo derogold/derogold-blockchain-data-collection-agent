@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-- TurtleCoin® >= 0.12.0
+- DeroGold >= 0.4.0.3
 - node >=6
 - MariaDB/MySQL with InnoDB support
 
@@ -15,7 +15,7 @@ For the best performance when using this package (as of December 31, 2019), your
 * 48GB RAM
   * 46GB dedicated to MariaDB/MySQL
 * 2 CPU Cores (4 Recommended)
-* SSD Storage
+* SSD Storage or NVMe Storage
 
 ***Warning***: Running the DB on system(s) with less than the minimum hardware requirements above will cause performance issues. If you are experiencing issues please verify that the system you are using meets the minimum requirements above. We cannot assist with performance issues with implementations that do not meet the above minimum requirements.
 
