@@ -1,6 +1,6 @@
 # TurtlePay® Blockchain Data Collection Agent for DeroGold
 
-> Collects DeroGold blockchain data into a SQL backend that serving and using the data a breeze.
+> Collects DeroGold blockchain data into a SQL backend. The SQL backend serves other services, such as Blockchain Explorer, mobile wallet, and third party payment services. 
 
 ## Prerequisites
 
@@ -10,12 +10,12 @@
 
 ## Hardware Requirements
 
-For the best performance when using this package (as of December 31, 2019), your Database server must have a minimum of the following:
+For the best performance when using this package (as of April 14, 2020), your Database server must have a minimum of the following:
 
-* 48GB RAM
+* 64GB RAM
   * 46GB dedicated to MariaDB/MySQL
-* 2 CPU Cores (4 Recommended)
-* SSD Storage or NVMe Storage
+* 4 CPU Cores (8 Recommended)
+* SSD Storage (NVMe Recommended)
 
 ***Warning***: Running the DB on system(s) with less than the minimum hardware requirements above will cause performance issues. If you are experiencing issues please verify that the system you are using meets the minimum requirements above. We cannot assist with performance issues with implementations that do not meet the above minimum requirements.
 
