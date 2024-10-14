@@ -1,0 +1,9 @@
+export NODE_ENV=production
+export MYSQL_HOST=localhost
+export MYSQL_PORT=3306
+export MYSQL_USERNAME=derogold
+export MYSQL_PASSWORD=spwq789
+export MYSQL_DATABASE=derogold
+export NODE_HOST=localhost
+export NODE_PORT=6969                                                                                                                       
+npm start
