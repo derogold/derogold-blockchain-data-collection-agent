@@ -1,21 +1,22 @@
-# TurtlePay® Blockchain Data Collection Agent for DeroGold
+# DeroGold Blockchain Data Collection Agent
 
 > Collects DeroGold blockchain data into a SQL backend. The SQL backend serves other services, such as Blockchain Explorer, mobile wallet, and third party payment services. 
+> It is based on the now non-existent TurtlePay® code. 
 
 ## Prerequisites
 
-- DeroGold >= 0.4.0.3
-- node >=6
+- DeroGold >= 0.7.1.0
+- node >=10
 - MariaDB/MySQL with InnoDB support
 
 ## Hardware Requirements
 
-For the best performance when using this package (as of April 14, 2020), your Database server must have a minimum of the following:
+For the best performance when using this package (as of October 17, 2024), your Database server must have a minimum of the following:
 
-* 64GB RAM
-  * 46GB dedicated to MariaDB/MySQL
-* 4 CPU Cores (8 Recommended)
-* SSD Storage (NVMe Recommended)
+* 32GB RAM
+  * 16GB dedicated to MariaDB/MySQL
+* 8 CPU Cores (16 Recommended)
+* NVMe Storage
 
 ***Warning***: Running the DB on system(s) with less than the minimum hardware requirements above will cause performance issues. If you are experiencing issues please verify that the system you are using meets the minimum requirements above. We cannot assist with performance issues with implementations that do not meet the above minimum requirements.
 
@@ -61,16 +62,12 @@ npm test
 
 ## Author
 
-👤 **TurtlePay® Development Team**
-
-* Twitter: [@TurtlePay](https://twitter.com/TurtlePay)
-* Github: [@TurtlePay](https://github.com/TurtlePay)
-
 👤 **DeroGold Developers**
 
 * Twitter: [@DeroGold](https://twitter.com/DeroGold)
 * Github: [@derogold](https://github.com/derogold)
 
+Based on the work done by now non-existent TurtlePay® Developers.
 
 ## 🤝 Contributing
 
@@ -85,7 +82,7 @@ Give a ⭐️ if this project helped you!
 
 ## 📝 License
 
-Copyright © 2018-2020 [TurtlePay® Development Team](https://github.com/TurtlePay).
-Copyright © 2020 [DeroGold Developers](https://github.com/derogold).
+Copyright © 2018-2020 [TurtlePay® Development Team].
+Copyright © 2020-2024 [DeroGold Developers](https://github.com/derogold).
 
 This project is [AGPL-3.0](https://github.com/TurtlePay/blockchain-data-collection-agent/blob/master/LICENSE) licensed.
