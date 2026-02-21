@@ -79,6 +79,9 @@ typings/
 # dotenv environment variables file
 .env
 
+# Docker env file (contains credentials)
+env.list
+
 ### Linux template
 *~
 
